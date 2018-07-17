@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>电影管理</title>
+		<Link rel = 'stylesheet' href = '/bootstrap/css/bootstrap.min.css' />
+		<Link rel = 'stylesheet' href = '/stylesheets/font-awesome.min.css' />
+		<Link rel = 'stylesheet' href = '/stylesheets/ionicons.min.css' />
+		<Link rel = 'stylesheet' href = '/admin-lte/dist/css/AdminLTE.min.css' />
+		<Link rel = 'stylesheet' href = '/admin-lte/dist/css/skins/skin-blue.min.css' />
+  </head>
+  <body class="hold-transition skin-blue sidebar-mini">
+   <div class="wrapper">
+
+		<%- include('./header.ejs') %>
+			
+			
+		<%- include('./menu.ejs') %>
+	 
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        电影管理
+      </h1>
+      <div class="pull-right">
+        <input type="text" placeholder='请输入电影名称搜索' id='searchInput' onchange = "searchMovie()"/>
+      </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      	<div class="box">
+      		<div class="box-header">
+      			<button class = "btn btn-xs btn-success">添加电影</button>
+            <div class="pull-right">
+             <% for(var i = 0; i < yearArr.length; i++ ){%>
+                <a href = "/getYearMovie?year=<%= yearArr[i] %>"><%= yearArr[i] %></a>
+             <% }%>
+              <a href = "/areaQueryMovieRoute?type=average&min=9.4&max=9.6">查找平均分为9.4-9.6之间的数据</a>
+              <a href = "/sortMovieRoute?type=average&num=1">评分升序</a>
+              <a href = "/sortMovieRoute?type=average&num=-1">评分降序</a>
+              <a href = "/sortMovieRoute?type=year&num=1">上映时间升序</a>
+              <a href = "/sortMovieRoute?type=year&num=-1">上映时间降序</a>
+            </div>
+          </div>
+      		<!-- /.box-header -->
+      		<div class="box-body no-padding">
+      			<table class="table table-striped">
+      				<tr>
+      					<th>#序号</th>
+      					<th>电影名称</th>
+      					<th>图片</th>
+                <th>评分</th>
+                <th>上映时间</th>
+                <th>票房</th>
+      					<th>操作</th>
+      				</tr>
+              <%  for( var i = 0; i < len; i++ ){ %>
+                <tr>
+                  <td> <%= i+1 %> </td>
+                  <td> <%= result[i].title %></td>
+                  <td>
+                    <img src="<%= result[i].images %>"  style = "height: 50px;width: auto"/>
+                  </td>
+                  <td> <%= result[i].average %></td>
+                  <td> <%= result[i].year %></td>
+                  <td> <%= result[i].collect_count %></td>
+                  <td>
+                    <button class="btn btn-xs btn-warning" >编辑</button>
+                    <button class="btn btn-xs btn-danger" >删除</button>
+                  </td>
+                </tr>
+              <% } %>
+      				
+      			</table>
+      		</div>
+      		<!-- /.box-body -->
+      	</div>
+      
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+		<%- include('./footer.ejs') %>
+
+		<%- include('./sidebar.ejs') %>
+</div>
+  </body>
+	<script src = "/javascripts/jquery.min.js" ></script>
+	<script src = "/bootstrap/js/bootstrap.min.js" ></script>
+	<script src = "/javascripts/app.min.js" ></script>
+  <script>
+    function searchMovie () {
+      var val = $("#searchInput").val();
+      window.location.href = "/searchMovie?title="+val
+    }
+  </script>
+  
+</html>

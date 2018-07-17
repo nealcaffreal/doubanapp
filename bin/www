@@ -1,0 +1,98 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ * 引入需要的依赖（模块）
+ */
+
+var app = require('../app');
+var debug = require('debug')('doubanapp:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ * 拿到服务器的端口号，如果设置了那么就采用设置，否则就采用8000
+ * 设置端口号
+ */
+
+var port = normalizePort(process.env.PORT || '8000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ * 创建服务器
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ * 监听端口
+ */
+
+server.listen(port);
+server.on('error', onError);//服务器出错，执行onError函数
+server.on('listening', onListening);//服务器正在运行时，执行onListening函数
+
+/**
+ * Normalize a port into a number, string, or false.
+ * 将端口归一化为数字、字符串或false
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) { //如果是一个数字，返回为false，如果不是数字，返回为true
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ * 服务器出错函数
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+	console.log(`your server is running at http://localhost:${port} `);
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

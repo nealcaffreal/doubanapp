@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>演员管理</title>
+		<meta name="referrer" content="no-referrer">
+		<Link rel = 'stylesheet' href = '/bootstrap/css/bootstrap.min.css' />
+		<Link rel = 'stylesheet' href = '/stylesheets/font-awesome.min.css' />
+		<Link rel = 'stylesheet' href = '/stylesheets/ionicons.min.css' />
+		<Link rel = 'stylesheet' href = '/admin-lte/dist/css/AdminLTE.min.css' />
+		<Link rel = 'stylesheet' href = '/admin-lte/dist/css/skins/skin-blue.min.css' />
+		<style>
+			input[type='text']{
+				width: 30px;
+			}
+		</style>
+  </head>
+  <body class="hold-transition skin-blue sidebar-mini">
+   <div class="wrapper">
+
+		<%- include('./header.ejs') %>
+			
+			
+		<%- include('./menu.ejs') %>
+	 
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        演员管理
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active">Here</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Your Page Content Here -->
+			<div class="box">
+				<div class="box-header">
+					<a href='/addCastRoute'><button class = "btn btn-xs btn-success">添加演员</button></a>
+					<div class="pull-right">
+						<button class = "btn btn-xs btn-default" onclick = "goFirstPage(<%= limitNum %>)">首页</button>
+						<button class = "btn btn-xs btn-default" onclick = "goPrevPage(<%= skipNum %>, <%= limitNum %>)">上一页</button>
+						<input type="text" id="currentNum" value="<%= skipNum %>" onchange="goPage(<%= totalNum %>, <%= limitNum %>)"/> 
+						/ 
+						<input type="text" disabled value="<%= totalNum %>"/> 
+						<button class = "btn btn-xs btn-default" onclick = "goNextPage(<%= skipNum %>, <%= totalNum %>, <%= limitNum %>)">下一页</button>
+						<button class = "btn btn-xs btn-default" onclick = "goLastPage(<%= totalNum %>, <%= limitNum %>)">尾页</button>
+						每页显示<select onchange = "changeLimit(<%= limitNum %>)" id = "limitNum">
+						<% if( limitNum  == 5) { %>
+							 <option value = "5" selected>5</option>
+							 <option value = "10">10</option>
+						<% }else if ( limitNum == 10) {  %>
+							 <option value = "5" >5</option>
+							 <option value = "10" selected>10</option>
+						<% }  %>
+										</select>个
+					</div>
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body no-padding">
+					<table class="table table-striped">
+						<tr>
+							<th>#序号</th>
+							<th>姓名</th>
+							<th>头像</th>
+							<th>操作</th>
+						</tr>
+						<% for( var i = 0; i < len; i++) { %>
+						<tr>
+							<td> <%= i + 1 %></td>
+							<td> <%= result[i].name %></td>
+							<td>
+								<img src="<%- result[i].avatars['small'] %>"  style = "height: 50px;width: auto"/>
+							</td>
+							<td>
+								<button class="btn btn-xs btn-warning" onclick = "updateItem(<%= result[i].id %>, <%= limitNum %>, <%= skipNum %>)">编辑</button>
+								<button class="btn btn-xs btn-danger" onclick = "deleteItem(<%= result[i].id %>, <%= limitNum %>, <%= skipNum %>)">删除</button>
+							</td>
+						</tr>
+						<%  }  %>
+					</table>
+				</div>
+				<!-- /.box-body -->
+			</div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+		<%- include('./footer.ejs') %>
+
+		<%- include('./sidebar.ejs') %>
+</div>
+  </body>
+	<script src = "/javascripts/jquery.min.js" ></script>
+	<script src = "/bootstrap/js/bootstrap.min.js" ></script>
+	<script src = "/javascripts/app.min.js" ></script>
+	<script>
+		function goFirstPage(limitNum ){
+			window.location.href = '/castspaging?limitNum='+limitNum+'&skipNum=0';
+		}
+		
+		function goPage ( totalNum, limitNum  ) {
+			var val = $("#currentNum").val();
+			// var limitNum = $("#limitNum").val();
+			
+			// alert(totalNum)
+			var skipNum = val - 1;
+			if ( val >= totalNum) {
+				$("#currentNum").val( totalNum );
+				skipNum = totalNum - 1;
+			}else if ( val <= 1) {
+				$("#currentNum").val( 1 );
+				skipNum = 0;
+			}
+			window.location.href = '/castspaging?limitNum='+limitNum+'&skipNum=' + skipNum;
+		}
+		
+		function goLastPage ( totalNum, limitNum  ) {
+			// var limitNum = $("#limitNum").val();
+			var skipNum = totalNum - 1;
+			window.location.href = '/castspaging?limitNum='+limitNum+'&skipNum=' + skipNum;
+		}
+		
+		function goPrevPage ( skipNum, limitNum  ) {
+			// var limitNum = $("#limitNum").val();
+			// alert(skipNum)
+			var skipNum = skipNum;
+			if ( skipNum == 1) {
+				$("#currentNum").val( 1 );
+				skipNum = 0;
+			}else {
+				skipNum -= 2;
+			}
+			window.location.href = '/castspaging?limitNum='+limitNum+'&skipNum=' + skipNum;
+		}
+		
+		function goNextPage ( skipNum, totalNum, limitNum ) {
+			// var limitNum = $("#limitNum").val();
+			var skipNum = skipNum;
+			if ( skipNum == totalNum) {
+				$("#currentNum").val( totalNum );
+				skipNum = totalNum - 1;
+			}
+			// alert(skipNum)
+			window.location.href = '/castspaging?limitNum='+limitNum+'&skipNum=' + skipNum;
+		}
+		
+		function changeLimit ( limitNum ) {
+			// alert( limitNum )
+			// alert( $("#limitNum").val() )
+			var limitNum = $("#limitNum").val();
+			
+			window.location.href = '/castspaging?limitNum='+limitNum+'&skipNum=0';
+		}
+    
+    function deleteItem ( id, limitNum, skipNum) {
+            console.log( id )
+            window.location.href = '/deleteCastRoute?id='+id + '&limitNum=' +limitNum+'&skipNum='+skipNum;
+        }
+    function updateItem ( id, limitNum, skipNum) {
+        console.log( id )
+        window.location.href = '/updateCastsRoute?id='+id + '&limitNum=' +limitNum+'&skipNum='+skipNum;
+    }
+	</script>
+</html>
